@@ -30,7 +30,7 @@ services:
       # Optional: mount local audio files for reference
       # - ./audio:/app/audio:ro
     environment:
-      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_VISIBLE_DEVICES=1
       - NVIDIA_DRIVER_CAPABILITIES=compute,utility
       # Uncomment if you have trouble connecting to HuggingFace
       # - HF_ENDPOINT=https://hf-mirror.com
@@ -39,7 +39,7 @@ services:
         reservations:
           devices:
             - driver: nvidia
-              count: all
+              device_ids: ['1']
               capabilities: [gpu]
     restart: unless-stopped
     command: ["omnivoice-demo", "--ip", "0.0.0.0", "--port", "7860"]
@@ -60,7 +60,7 @@ services:
     volumes:
       - omnivoice_models:/app/models_cache
     environment:
-      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_VISIBLE_DEVICES=1
       - NVIDIA_DRIVER_CAPABILITIES=compute,utility
       # Uncomment if you have trouble connecting to HuggingFace
       # - HF_ENDPOINT=https://hf-mirror.com
@@ -69,7 +69,7 @@ services:
         reservations:
           devices:
             - driver: nvidia
-              count: all
+              device_ids: ['1']
               capabilities: [gpu]
     restart: unless-stopped
     command: ["omnivoice-api", "--host", "0.0.0.0", "--port", "8000"]
