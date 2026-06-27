@@ -1,0 +1,82 @@
+# ==============================================================================
+# Docker Compose — GPU mode (NVIDIA CUDA)
+#
+# Requirements:
+#   - NVIDIA GPU with CUDA drivers installed
+#   - NVIDIA Container Toolkit (nvidia-docker2)
+#     Install: https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html
+#
+# Usage:
+#   docker compose -f docker-compose.gpu.yml up --build
+#   docker compose -f docker-compose.gpu.yml up -d          # detached
+#   docker compose -f docker-compose.gpu.yml down            # stop
+#
+# Access: http://localhost:7860
+# ==============================================================================
+
+services:
+  # ---------- Gradio Demo UI ----------
+  omnivoice-demo:
+    container_name: omnivoice-gpu-demo
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        DEVICE: cuda
+    ports:
+      - "7860:7860"
+    volumes:
+      - omnivoice_models:/app/models_cache
+      # Optional: mount local audio files for reference
+      # - ./audio:/app/audio:ro
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+      # Uncomment if you have trouble connecting to HuggingFace
+      # - HF_ENDPOINT=https://hf-mirror.com
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    restart: unless-stopped
+    command: ["omnivoice-demo", "--ip", "0.0.0.0", "--port", "7860"]
+    profiles:
+      - demo
+      - all
+
+  # ---------- REST API with Swagger ----------
+  omnivoice-api:
+    container_name: omnivoice-gpu-api
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        DEVICE: cuda
+    ports:
+      - "8000:8000"
+    volumes:
+      - omnivoice_models:/app/models_cache
+    environment:
+      - NVIDIA_VISIBLE_DEVICES=all
+      - NVIDIA_DRIVER_CAPABILITIES=compute,utility
+      # Uncomment if you have trouble connecting to HuggingFace
+      # - HF_ENDPOINT=https://hf-mirror.com
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    restart: unless-stopped
+    command: ["omnivoice-api", "--host", "0.0.0.0", "--port", "8000"]
+    profiles:
+      - api
+      - all
+
+volumes:
+  omnivoice_models:
+    name: omnivoice_models_cache

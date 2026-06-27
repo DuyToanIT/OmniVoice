@@ -1,0 +1,59 @@
+# ==============================================================================
+# .dockerignore — Keep Docker build context small and clean
+# ==============================================================================
+
+# Git
+.git
+.github
+.gitignore
+
+# Python caches
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+*.egg
+dist/
+build/
+.venv/
+.env
+
+# IDE / OS
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo
+.claude/
+.gemini/
+
+# Caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Data / results / experiments (large files)
+/data/
+/download/
+/results/
+/local/
+/exp*/
+/.cache*
+/.tmp/
+/run*
+examples/data*
+examples/download*
+examples/exp*
+
+# Audio files (not needed for build)
+*.wav
+*.jsonl
+
+# Docker files (don't include themselves)
+docker-compose*.yml
+Dockerfile
+.dockerignore
+start.sh
+
+# Documentation (not needed at runtime)
+docs/
